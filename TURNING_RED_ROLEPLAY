@@ -1,0 +1,141 @@
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+
+local Window = OrionLib:MakeWindow({Name = "Turning red roleplay-by jude/rev", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"})
+
+local Tab = Window:MakeTab({
+	Name = "Trolling",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+Tab:AddParagraph("READ","At the bottom center of your screen if you hover over it a command bar will appear when you hover over it. it's op as fuck")
+
+Tab:AddButton({
+	Name = "Op command bar",
+	Callback = function()
+      		--[[
+
+    generic cmdbar for https://www.roblox.com/games/9146997053/Miriams-Turning-Red-Roleplay-RP-4-Town
+
+    press ; or hover the mouse over the bottom middle of the screen to open the command bar
+
+    type "cmds" to show all the commands
+
+    for "player" argument you can use "all", "others", displayname (or partially the displayname) or name (or partially the name)
+
+]]
+
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/shidemuri/scripts/main/ui_lib.lua"))()
+
+if game:GetService('CoreGui'):FindFirstChild('generic command bar') then
+    game:GetService('CoreGui'):FindFirstChild('generic command bar'):Destroy()
+end
+
+local Pendulum = Library:New("generic command bar")
+local cmd = Pendulum:NewCommandBar('bad remoteevent protection moment')
+local function del(a)
+    game:GetService('ReplicatedStorage').DeleteCar:FireServer(a)
+end
+local function get_player(name)
+    local thing = {}
+    if name == 'all' then
+        for _,v in next, game.Players:GetPlayers() do
+            table.insert(thing, v)
+        end
+    elseif name == 'others' then
+        for _,v in next, game.Players:GetPlayers() do
+            if v ~= game.Players.LocalPlayer then
+                table.insert(thing, v)
+            end
+        end
+    else
+        for _,v in next, game.Players:GetPlayers() do
+            if v.Name:lower():find(name:lower()) or v.DisplayName:lower():find(name:lower()) then
+                thing[#thing+1] = v
+            end
+        end
+    end
+    return thing
+end
+cmd:AddCommand('kill', {'player'}, 'kills someone', function(args)
+    for _,v in next, get_player(args[1]) do
+        if v.Character and v.Character:FindFirstChild('HumanoidRootPart') then
+            del(v.Character.Head)
+        end
+    end
+end)
+getgenv().playerlistlol = {}
+cmd:AddCommand('loopkill', {'player'}, 'loopkills someone', function(args)
+    for _,v in next, get_player(args[1]) do
+        if getgenv().playerlistlol[v.Name] then return end
+        table.insert(getgenv().playerlistlol, v.Name)
+    end
+end)
+cmd:AddCommand('unloopkill', {'player'}, 'unloopkills someone', function(args)
+    for _,v in next, get_player(args[1]) do
+        for i,v in next, getgenv().playerlistlol do
+            if v == v.Name then
+                table.remove(getgenv().playerlistlol, i)
+            end
+        end
+    end
+end)
+cmd:AddCommand('kick', {'player'}, 'kicks someone', function(args)
+    for _,v in next, get_player(args[1]) do
+        del(v)
+    end
+end)
+cmd:AddCommand('shutdown', 'none', 'shutdown the server', function()
+    for _,v in next, game:GetService('Players'):GetPlayers() do
+        del(v)
+    end
+end)
+cmd:AddCommand('hammer', 'none', 'gives a btools hammer', function()
+    local thing = Instance.new('Tool',game.Players.LocalPlayer.Backpack)
+    thing.Name = 'fe hammer lmao'
+    thing.ToolTip = 'ive never seen such bad remoteevent protection'
+    thing.RequiresHandle = false
+    local m = game.Players.LocalPlayer:GetMouse()
+    thing.Activated:Connect(function()
+        if m.Target then 
+            local e = Instance.new("Explosion")
+            e.BlastPressure = 0
+            e.Position = m.Target.Position
+            e.Parent = workspace
+                    
+            local s = Instance.new("Sound")
+            s.PlayOnRemove = true
+            s.SoundId = "rbxasset://sounds/collide.wav"
+            s.Volume = 1
+            s.Parent = m.Target
+            game.ReplicatedStorage.DeleteCar:FireServer(m.Target)
+        end
+    end)
+    local sel = Instance.new('SelectionBox',workspace)
+    sel.Color3 = Color3.new(1, 0.815686, 0)
+    thing.Equipped:Connect(function()
+        m.Move:Connect(function()
+            if m.Target and thing.Parent == game.Players.LocalPlayer.Character then 
+                sel.Adornee = m.Target
+            else 
+                sel.Adornee = nil
+            end
+        end)
+    end)
+end)
+
+Pendulum:Hide()
+
+while task.wait() do
+    for _,v in next, getgenv().playerlistlol do
+        if game.Players:FindFirstChild(v) then
+            if game.Players[v].Character and game.Players[v].Character:FindFirstChild('HumanoidRootPart') then
+                del(game.Players[v].Character.Head)
+            end
+        else 
+            table.remove(getgenv().playerlistlol, v)
+        end
+    end
+end
+  	end    
+})
